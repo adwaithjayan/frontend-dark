@@ -18,7 +18,7 @@ const blog = defineCollection({
 	}),
 });
 
-const careers = defineCollection({
+const positions = defineCollection({
 	type: "content",
 	schema: z.object({
 		title: z.string(),
@@ -26,8 +26,9 @@ const careers = defineCollection({
 		category: z.string(),
 		remote: z.boolean(),
 		type: z.string(),
+		
 	}),
 });
 
-export const collections = { blog, careers };
+export const collections = { blog, positions };
 

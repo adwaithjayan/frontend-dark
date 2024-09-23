@@ -1,7 +1,88 @@
 ---
-// import { getCollection } from 'astro:content';
+import { getColor } from "../../../utils/postUtil";
+import Cards from "../../components/Cards";
+import { CutcornerButton } from "../../components/CutcornerButton";
+import { Hexogon } from "../../components/Hexogon";
+import Tag from "../../components/Tag";
+import DefaultLayout from "../../layouts/Default.astro";
+import {getCollection} from "astro:content"
+import { twMerge } from "tailwind-merge";
+import {motion} from 'framer-motion'
 
-// const posts = (await getCollection('blog')).sort(
-// 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-// );
+const posts =(await getCollection('blog')).sort(
+    (a: { data: { pubDate: number; }; },b: { data: { pubDate: number; }; }) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)
+const latestPosts =posts[0];
 ---
+
+
+
+<DefaultLayout>
+    <section class="py-60 relative overflow-x-clip">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Hexogon size={800} duration={30} client:load />
+        </div>
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Hexogon size={1200} duration={50} reverse client:load/>
+        </div>
+        <div class="container">
+            <div class="max-w-3xl mx-auto">
+                <p class="font-extrabold text-zinc-500 text-center tracking-wider">LATEST POST</p>
+                <h1 class="font-heading font-black text-5xl lg:text-7xl md:text-6xl text-center mt-4">{latestPosts.data.title}</h1>
+                <p class="text-center text-xl md:text=2xl mt-6 text-zinc-400 max-w-xl mx-auto">{latestPosts.data.description}</p>
+                <div class="flex justify-center mt-10">
+                    <a href={`/blog/${latestPosts.slug}`}>
+                    <CutcornerButton>Read More</CutcornerButton>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-32 bg-zinc-900/30 backdrop-blur-sm" >
+        <div class="container">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="flex flex-col gap-8 lg:gap-12">
+                    {posts.map(({data:{category,title,description},slug}: any,i: number)=>(
+                        <motion.a
+                        initial={{opacity:0,y:20,}}
+                        whileInView={{opacity:1,y:0,}}
+                        viewport={{once:true,amount:0.5}} 
+                        transition={{
+                            duration:0.5,
+                            ease:'easeIn'
+                        }}                       
+                        href={`/blog/${slug}`}  className={twMerge(i%2 ===0 ? "":"md:hidden block")} client:load>
+                        <Cards buttonText="Read More" color={getColor(category)}>
+                            <Tag color={getColor(category)} category={category}/>
+                            <h2 class="font-heading font-black text-3xl mt-4">{title}</h2>
+                            <p class="text-lg mt-6 text-zinc-400">{description}</p>
+                        </Cards>
+                    </motion.a>
+                    ))}
+                </div>
+                <div class="md:flex hidden flex-col gap-8 lg:gap-12 mt-24">
+                    {posts.map(({data:{category,title,description},slug}: any,i: number)=>(
+                        <motion.a 
+                        initial={{opacity:0,y:20,}}
+                        whileInView={{opacity:1,y:0,}}
+                        viewport={{once:true,amount:0.5}} 
+                        transition={{
+                            duration:0.5,
+                            ease:'easeIn'
+                        }} 
+                        href={`/blog/${slug}`} className={twMerge(i%2 ===0 ? "hidden":"")} client:load>
+                        <Cards buttonText="Read More" color={getColor(category)}>
+                            <Tag color={getColor(category)} category={category}/>
+                            <h2 class="font-heading font-black text-3xl mt-4">{title}</h2>
+                            <p class="text-lg mt-6 text-zinc-400">{description}</p>
+                        </Cards>
+                    </motion.a>
+                    ))}
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    
+
+</DefaultLayout>

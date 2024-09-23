@@ -1,4 +1,8 @@
 ---
+import CAT from "../sections/CAT";
+import Footer from "../sections/Footer";
+import { HeaderSection } from "../sections/Header";
+import Testimonials from "../sections/Testimonials";
 import "../styles/global.css";
 ---
 
@@ -16,6 +20,10 @@ import "../styles/global.css";
     />
   </head>
   <body>
+    <HeaderSection client:load/>
     <slot />
+    <Testimonials client:load/>
+    <CAT client:load/>
+    <Footer />
   </body>
 </html>
